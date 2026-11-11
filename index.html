@@ -111,6 +111,9 @@ details.script ol{padding-left:18px;margin-top:8px;display:flex;flex-direction:c
 .mini-t span{display:block;font-size:11.5px;color:#cbc4e6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mini-bar,.bar{height:3px;background:#ffffff26;border-radius:9px;margin-top:8px;overflow:hidden}
 .mini-bar i,.bar i{display:block;height:100%;background:var(--grad);width:0}
+.mini-t b{display:flex;align-items:center;gap:6px}
+.mini-t b .tt{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini-t b .tag{display:inline-block;flex:none;margin:0;white-space:nowrap}
 .tag{font-size:10.5px;font-weight:600;padding:1px 7px;border-radius:6px;background:#ffffff1e;margin-left:4px}
 .tag.hot{background:var(--brand);color:var(--ink)}
 .tabbar{flex:none;display:grid;grid-template-columns:repeat(4,1fr);padding:6px 6px 14px;margin-top:6px;border-top:1px solid var(--line);background:#0d0d17}
@@ -770,7 +773,7 @@ class Phone{
     if(!S.now){M.className='mini idle';M.innerHTML='ยังไม่มีเพลงที่เล่นอยู่ — เลือกเพลงแล้วกด ＋ ได้เลย';return}
     const s=SONG(S.now.songId),nx=S.queue[0];
     M.className='mini';M.dataset.act='open-now';
-    M.innerHTML=`<div class="mini-row">${cover(s,'s')}<div class="mini-t"><b>${esc(s.title)}${S.key?`<span class="tag hot">KEY ${keyStr(S.key)}</span>`:''}${S.vocalOn?'':'<span class="tag">🎤 ปิด</span>'}</b><span>${sgChip(S.now.by,this.me).replace('<em','<em style="margin:0;font-size:11px"').replace('class="sg"','class="sg"')} ${nx?'· ถัดไป: '+esc(SONG(nx.songId).title):''}</span></div>
+    M.innerHTML=`<div class="mini-row">${cover(s,'s')}<div class="mini-t"><b><span class="tt">${esc(s.title)}</span>${S.key?`<span class="tag hot">KEY ${keyStr(S.key)}</span>`:''}${S.vocalOn?'':'<span class="tag">🎤 ปิด</span>'}</b><span>${sgChip(S.now.by,this.me).replace('<em','<em style="margin:0;font-size:11px"').replace('class="sg"','class="sg"')} ${nx?'· ถัดไป: '+esc(SONG(nx.songId).title):''}</span></div>
       <button class="add" style="position:static;flex:none" data-act="playpause" aria-label="เล่น/หยุด">${ic(S.paused?'play':'pause',18)}</button></div>
       <div class="mini-bar"><i data-prog style="width:${S.now.elapsed/s.dur*100}%"></i></div>`;
   }
