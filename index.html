@@ -462,7 +462,7 @@ const IC={
 const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
 
 /* ================= data (ตัวอย่าง) ================= */
-// [title, artist, lang, moods, alias(ทับศัพท์/คำค้นข้ามภาษา), durationSec]
+// [title, artist, lang, moods, alias(ทับศัพท์/คำค้นข้ามภาษา), durationSec] — อัลบั้มอยู่ใน ALBUMS ด้านล่าง
 const RAW=[
  // ไทย
  ['ซ่อนกลิ่น','พาล์มมี่','th','sad,easy','son klin sonklin palmy พาลมมี่ พาล์มมี่ ซ่อนกลิ่น',255],
@@ -512,9 +512,22 @@ const RAW=[
  ['Kick Back','Kenshi Yonezu','jp','fun','คิกแบ็ค เคนชิ โยเนซึ ชินซอว์แมน chainsaw man kenshi',193],
  ['Blue Bird','Ikimonogakari','jp','fun,easy','บลูเบิร์ด นารุโตะ naruto อิกิโมโนกาคาริ',218]
 ];
-const SONGS=RAW.map((r,i)=>({id:i+1,title:r[0],artist:r[1],lang:r[2],moods:r[3].split(','),alias:r[4],dur:r[5],h:(i*47)%360}));
+// อัลบั้ม (ตามปกที่ใช้) — ใช้ค้นหาและแสดงในผลการค้นหา
+const ALBUMS={
+ 'ซ่อนกลิ่น':'ซ่อนกลิ่น (Single)','ฝนตกไหม':'ฝนตกไหม (Single)','ย้ำ':'Bodyslam: Since 1996 (10 Years Anniversary)','ที่ปรึกษา':'ที่ปรึกษา (Single)',
+ "ขี้แง (Boys Don't Cry)":"ขี้แง (Boys Don't Cry) (Another Session)",
+ 'Shallow':'A Star Is Born Soundtrack','Perfect':'÷ (Divide)','Uptown Funk':'Uptown Special','Someone Like You':'21','Bohemian Rhapsody':'A Night at the Opera',
+ "Don't Stop Believin'":'Greatest Hits','Shape of You':'÷ (Divide)','Billie Jean':'Thriller','My Heart Will Go On':'My Love: Essential Collection',
+ 'Take Me Home, Country Roads':'The Essential John Denver','Dancing Queen':'ABBA Gold','Hotel California':'Hotel California','Count on Me':'Doo-Wops & Hooligans',
+ 'Dynamite':'BE','Hype Boy':"NewJeans 1st EP 'New Jeans'",'Butter':'Proof','How You Like That':'THE ALBUM','Ditto':'Ditto (Single)','Super Shy':"NewJeans 'Super Shy' (Single)",
+ 'Spring Day':'YOU NEVER WALK ALONE','Gangnam Style':'Gangnam Style (Single)','Love Dive':'LOVE DIVE (Single)','Gee':'Gee (EP)','Fantastic Baby':'Alive','Good Day':'Real',
+ 'Lemon':'STRAY SHEEP','Idol':'Idol (Single)','Yoru ni Kakeru':'THE BOOK','Gurenge':'LEO-NiNE','Pretender':'Pretender (Single)','Subtitle':'Subtitle (Single)',
+ 'Zankoku na Tenshi no Thesis':'Zankoku na Tenshi no Thesis / Tamashii no Refrain (EP)','Cherry':'Indigo Chiheisen','Sakura':'Ikimonobakari: Members BEST Selection',
+ 'Marigold':'Marigold (Single)','Hakujitsu':'Hakujitsu (Single)','Kick Back':'KICK BACK (Single)','Blue Bird':'Ikimonobakari: Members BEST Selection'
+};
+const SONGS=RAW.map((r,i)=>({id:i+1,title:r[0],artist:r[1],lang:r[2],moods:r[3].split(','),alias:r[4],dur:r[5],album:ALBUMS[r[0]]||'',h:(i*47)%360}));
 const norm=s=>s.toLowerCase().replace(/[\s'’".,!?·\-_()&]/g,'');
-SONGS.forEach(s=>s.hay=norm(s.title+' '+s.artist+' '+s.alias));
+SONGS.forEach(s=>s.hay=norm(s.title+' '+s.artist+' '+s.album+' '+s.alias));
 const SONG=id=>SONGS.find(s=>s.id===id);
 const T=t=>SONGS.find(s=>s.title===t).id;
 const HOT=['Shallow','Dynamite','Lemon','ซ่อนกลิ่น','Hype Boy','Idol','Perfect','ที่ปรึกษา','Uptown Funk','Pretender','Ditto',"ขี้แง (Boys Don't Cry)"].map(T);
@@ -821,7 +834,7 @@ class Phone{
     if(this.mainTab!==this.tab){
       this.mainTab=this.tab;M.scrollTop=0;
       M.innerHTML=this.tab==='search'?`<div class="sticky">
-        <div class="sbar"><span class="ico">${ic('search',20)}</span><input data-key="q" placeholder="ค้นหาชื่อเพลง / ศิลปิน / ทับศัพท์" autocomplete="off" enterkeyhint="search"><button class="x" data-act="clearq" aria-label="ล้าง">${ic('x',18)}</button><button class="micb" data-act="mic" aria-label="ค้นหาด้วยเสียง">${ic('mic',20)}</button></div>
+        <div class="sbar"><span class="ico">${ic('search',20)}</span><input data-key="q" placeholder="ค้นหาชื่อเพลง / ศิลปิน / อัลบั้ม" autocomplete="off" enterkeyhint="search"><button class="x" data-act="clearq" aria-label="ล้าง">${ic('x',18)}</button><button class="micb" data-act="mic" aria-label="ค้นหาด้วยเสียง">${ic('mic',20)}</button></div>
         <div class="chips" data-chips="lang">${Object.entries(LANGS).map(([k,v])=>`<button class="chip" data-act="lang" data-l="${k}">${k==='all'?v:(LFLAG[k]+' '+v)}</button>`).join('')}</div>
         <div class="chips" data-chips="mood">${Object.entries(MOODS).map(([k,v])=>`<button class="chip mood" data-act="mood" data-m="${k}">${v}</button>`).join('')}</div>
       </div><div class="res"></div>`:`<div class="dyn"></div>`;
@@ -852,7 +865,7 @@ class Phone{
       let L=searchSongs(this.query,this.lang,this.mood);
       L=[...L].sort(this.sort==='pop'?(a,b)=>a.pop-b.pop:this.sort==='title'?(a,b)=>a.title.localeCompare(b.title,'th'):(a,b)=>a.artist.localeCompare(b.artist,'th'));
       R.innerHTML=L.length?`<div class="resh"><span>พบ ${L.length} เพลง</span><label>เรียง <select data-key="sort"><option value="pop" ${this.sort==='pop'?'selected':''}>ยอดนิยม</option><option value="title" ${this.sort==='title'?'selected':''}>ชื่อเพลง ก–Z</option><option value="artist" ${this.sort==='artist'?'selected':''}>ศิลปิน</option></select></label></div>`
-        +L.map(s=>`<div class="li">${cover(s,'s')}<div class="t"><b>${esc(s.title)}</b><span>${esc(s.artist)}<i class="pill">${LTAG[s.lang]}</i>${s.moods.map(m=>`<i class="pill">${MOODS[m].split(' ')[0]}</i>`).join('')}</span></div>${this.addBtn(s)}</div>`).join('')
+        +L.map(s=>`<div class="li">${cover(s,'s')}<div class="t"><b>${esc(s.title)}</b><span>${esc(s.artist)}<i class="pill">${LTAG[s.lang]}</i>${s.moods.map(m=>`<i class="pill">${MOODS[m].split(' ')[0]}</i>`).join('')}</span>${s.album?`<span>💿 ${esc(s.album)}</span>`:''}</div>${this.addBtn(s)}</div>`).join('')
         :`<div class="empty"><div class="big">🔎</div><b>ไม่พบเพลง${this.query?` “${esc(this.query)}”`:''}</b><p style="margin-top:6px;font-size:13px">ลองพิมพ์ชื่อศิลปิน หรือใช้ไมค์ค้นหาด้วยเสียง</p><div class="chips" style="justify-content:center;margin-top:14px;flex-wrap:wrap"><button class="chip" data-act="setq" data-q="บีทีเอส">บีทีเอส</button><button class="chip" data-act="setq" data-q="yoasobi">yoasobi</button><button class="chip" data-act="setq" data-q="บอดี้สแลม">บอดี้สแลม</button></div></div>`;
     }else{
       const card=s=>`<div class="card"><div style="position:relative">${cover(s,'m')}${this.addBtn(s)}</div><div class="cap"><b>${esc(s.title)}</b><span>${esc(s.artist)}</span></div></div>`;
