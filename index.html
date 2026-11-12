@@ -126,9 +126,6 @@ details.script ol{padding-left:18px;margin-top:8px;display:flex;flex-direction:c
 .g-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;padding:18px 24px 28px;text-align:center;flex:1;justify-content:center}
 .g-wrap h2{font-size:21px}
 .g-wrap p{color:var(--muted);font-size:13px}
-.qrframe{position:relative;width:200px;height:200px;border-radius:20px;background:#fff;padding:12px;overflow:hidden;box-shadow:0 0 0 3px var(--brand),0 0 50px #FDF10555}
-.scanline{position:absolute;left:0;right:0;height:3px;background:var(--brand);box-shadow:0 0 14px var(--brand);animation:scan 2s ease-in-out infinite}
-@keyframes scan{0%,100%{top:8%}50%{top:90%}}
 .inp{width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;font-size:16px;outline:none;text-align:center}
 .inp:focus{border-color:var(--brand)}
 .avrow{display:flex;gap:-4px;justify-content:center}
@@ -258,6 +255,7 @@ details.script ol{padding-left:18px;margin-top:8px;display:flex;flex-direction:c
 .you{font-size:10.5px;color:var(--ink);background:var(--brand);padding:1px 7px;border-radius:6px;margin-left:6px}
 .qrcard{margin:8px 14px;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);display:flex;gap:14px;align-items:center}
 .qrcard .q{width:92px;height:92px;background:#fff;border-radius:10px;padding:5px;flex:none}
+.qrcard .q img{width:100%;height:100%;object-fit:contain;display:block}
 .qrcard p{font-size:12.5px;color:var(--muted)}
 
 /* layer / sheets */
@@ -459,16 +457,6 @@ const IC={
 };
 const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
 
-function qrSVG(seed,n=25){
-  let s=seed*9301+49297;const r=()=>{s=(s*9301+49297)%233280;return s/233280};
-  const fin=(x,y)=>(x<8&&y<8)||(x>=n-8&&y<8)||(x<8&&y>=n-8);
-  let d='';
-  for(let y=0;y<n;y++)for(let x=0;x<n;x++){if(fin(x,y))continue;if(r()>0.5)d+=`M${x} ${y}h1v1h-1z`}
-  const f=(ox,oy)=>`M${ox} ${oy}h7v7h-7zM${ox+1} ${oy+1}v5h5v-5zM${ox+2} ${oy+2}h3v3h-3z`;
-  d+=f(0,0)+f(n-7,0)+f(0,n-7);
-  return `<svg viewBox="0 0 ${n} ${n}" width="100%" height="100%" shape-rendering="crispEdges"><path d="${d}" fill="#111" fill-rule="evenodd"/></svg>`;
-}
-
 /* ================= data (ตัวอย่าง) ================= */
 // [title, artist, lang, moods, alias(ทับศัพท์/คำค้นข้ามภาษา), durationSec]
 const RAW=[
@@ -652,7 +640,7 @@ const sgChip=(id,me)=>{const p=sg(id);return p?`<em class="sg" style="--c:${p.co
 
 class Phone{
   constructor(label,pre){
-    this.label=label;this.me=null;this.joinedSession=null;this.stage=pre?'app':'scan';
+    this.label=label;this.me=null;this.joinedSession=null;this.stage=pre?'app':'name';
     this.tab='search';this.query='';this.lang='all';this.mood=null;this.sort='pop';this.sheet=null;this.dialog=null;
     this.cart={};this.cat='drink';this.oview='menu';this.layerKey=null;this.mainTab=null;this.gateKey=null;this.dragging=null;this.voice=null;
     this.wrap=document.createElement('div');this.wrap.className='pwrap';
@@ -708,8 +696,7 @@ class Phone{
   act(a,b){
     const d=b?b.dataset:{};
     switch(a){
-      case 'scan':this.stage='name';this.update();break;
-      case 'rescan':this.stage='scan';this.update();break;
+      case 'rescan':this.stage='name';this.update();break;
       case 'chipname':{const i=this.$('[data-key=name]');i.value=d.n;i.dispatchEvent(new Event('input',{bubbles:true}));break}
       case 'join':{
         const v=this.$('[data-key=name]').value.trim();if(!v)return;
@@ -779,12 +766,12 @@ class Phone{
     this.$('.layer').style.display=k==='app'?'':'none';this.$('.screen').classList.toggle('on',k==='app');
     if(k==='app'||this.gateKey===k)return;
     this.gateKey=k;
-    if(k==='scan'||k==='expired'){
+    if(k==='expired'){
       g.innerHTML=`<div class="g-wrap">
         <img class="glogo" src="${LOGO}" alt="Soundcheck">
-        ${k==='expired'?`<div style="font-size:44px">⏰</div><h2>เซสชันนี้สิ้นสุดแล้ว</h2><p>ลูกค้ากลุ่มก่อนเช็กเอาต์แล้ว คิวและรายชื่อถูกล้าง<br>สแกน QR ที่ผนังห้องอีกครั้งเพื่อเข้าร่วมเซสชันใหม่</p>`:`<h2>สแกน QR Code ในห้อง</h2><p>เลือกเพลง จัดคิวร่วมกับเพื่อน<br>และสั่งเครื่องดื่มได้จากมือถือของคุณ</p>`}
-        <button class="qrframe" data-act="scan" aria-label="สแกน QR">${qrSVG(5)}<span class="scanline"></span></button>
-        <button class="btn primary" data-act="scan">${k==='expired'?'สแกน QR ใหม่':'แตะเพื่อสแกน (จำลอง)'}</button>
+        <div style="font-size:44px">⏰</div><h2>เซสชันนี้สิ้นสุดแล้ว</h2>
+        <p>ลูกค้ากลุ่มก่อนเช็กเอาต์แล้ว คิวและรายชื่อถูกล้าง<br>สแกน QR ที่ผนังห้องอีกครั้งเพื่อเข้าร่วมเซสชันใหม่</p>
+        <button class="btn primary" data-act="rescan">เข้าร่วมเซสชันใหม่</button>
         <small style="color:var(--muted)">ห้อง 5 · VIP</small></div>`;
     }else if(k==='name'){
       const used=S.singers.map(s=>s.name),sug=['ต้น','เจ','ปอ','ฟ้า','นุ่น','บอส'].filter(n=>!used.includes(n)).slice(0,4);
@@ -910,7 +897,7 @@ class Phone{
     h+=`<div class="qh"><h3>ผู้ร้องในห้อง</h3><button class="link" data-act="editname">แก้ชื่อเล่นของฉัน</button></div>`;
     h+=S.singers.map(s=>{const q=S.queue.filter(x=>x.by===s.id).length+(S.now&&S.now.by===s.id?1:0),o=S.orders.filter(x=>x.by===s.id).reduce((a,x)=>a+orderTotal(x),0);
       return `<div class="sgrow"><div class="av" style="--c:${s.color};margin:0">${s.emoji}</div><div class="t"><b>${esc(s.name)}${s.id===this.me?'<i class="you">คุณ</i>':''}</b><span>${q} เพลงในคิว · สั่งไป ${baht(o)}</span></div></div>`}).join('');
-    h+=`<div class="qrcard"><div class="q">${qrSVG(5)}</div><div><b>ชวนเพื่อนเข้าห้อง</b><p>ให้เพื่อนสแกน QR ที่ผนังห้อง ใส่ชื่อเล่น แล้วเพิ่มเพลงลงคิวร่วมกันได้ทันที</p></div></div>`;
+    h+=`<div class="qrcard"><div class="q"><img src="assets/qr.png" alt="QR Code ห้อง 5" onerror="this.parentNode.remove()"></div><div><b>ชวนเพื่อนเข้าห้อง</b><p>ให้เพื่อนสแกน QR ที่ผนังห้อง ใส่ชื่อเล่น แล้วเพิ่มเพลงลงคิวร่วมกันได้ทันที</p></div></div>`;
     h+=`<div class="hint" style="text-align:center;padding:10px 20px 20px">ทุกคนในห้องมีสิทธิ์เท่ากัน · เมื่อห้องเช็กเอาต์ คิวและรายชื่อจะถูกล้างอัตโนมัติ</div>`;
     D.innerHTML=h;
   }
@@ -1026,7 +1013,7 @@ function buildDemo(){
     <button class="dbtn wide" data-d="reset">↺ รีเซ็ตเดโมทั้งหมด</button></div></div>
   <div class="panel"><h4>📋 กิจกรรมล่าสุดในห้อง</h4><div class="logbox" id="logbox"></div></div>
   <details class="script panel"><summary>📖 ลำดับการพรีเซนต์ที่แนะนำ</summary><ol>
-    <li>มือถือ A: สแกน QR → ตั้งชื่อเล่น</li><li>ค้นหา “บีทีเอส” / กดไมค์ / กรองตามภาษาและอารมณ์</li>
+    <li>มือถือ A: เปิดหน้าเว็บ (เหมือนสแกน QR จริง) → ตั้งชื่อเล่น</li><li>ค้นหา “บีทีเอส” / กดไมค์ / กรองตามภาษาและอารมณ์</li>
     <li>กด ＋ เพิ่มเพลง แล้วดูมือถือ B, C และจอ TV อัปเดตทันที</li>
     <li>แท็บคิว: ลากสลับ / ร้องถัดไป / ลบ + ย้อนกลับ</li>
     <li>แตะ mini player: ปรับคีย์ ปิดเสียงนักร้อง ปรับเสียงดนตรี</li>
