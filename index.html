@@ -103,8 +103,10 @@ details.script ol{padding-left:18px;margin-top:8px;display:flex;flex-direction:c
 .me{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 6px;border-radius:999px;background:var(--ink);color:#fff;border:1px solid var(--ink);font-size:12.5px}
 .main{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;position:relative}
 .main::-webkit-scrollbar{display:none}
-.mini{flex:none;margin:6px 10px 0;border-radius:16px;background:linear-gradient(135deg,#2d2a07,#1d1b0a);border:1px solid #ffffff1a;padding:8px 10px 10px;position:relative;cursor:pointer;overflow:hidden}
-.mini.idle{background:var(--surface);cursor:default;text-align:center;color:var(--muted);font-size:12.5px;padding:12px}
+/* แถบกำลังเล่น: ลอยทับเนื้อหา พื้นโปร่งฝ้า (frosted glass) เห็นภาพปกเลื่อนผ่านข้างหลัง แบบ Apple Music */
+.mini{position:absolute;left:10px;right:10px;bottom:calc(var(--tabh,72px) + 8px);z-index:6;margin:0;border-radius:16px;background:rgba(40,36,8,.55);-webkit-backdrop-filter:blur(22px) saturate(1.8);backdrop-filter:blur(22px) saturate(1.8);border:1px solid #ffffff26;box-shadow:0 10px 30px #0009;padding:8px 10px 10px;cursor:pointer;overflow:hidden}
+.mini.idle{background:rgba(32,30,30,.6);cursor:default;text-align:center;color:#d6d2ca;font-size:12.5px;padding:12px}
+.main::after{content:"";display:block;height:calc(var(--minih,70px) + 22px)}
 .mini-row{display:flex;align-items:center;gap:10px}
 .mini-t{flex:1;min-width:0}
 .mini-t b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -218,7 +220,7 @@ details.script ol{padding-left:18px;margin-top:8px;display:flex;flex-direction:c
 .step button{width:32px;height:32px;font-size:18px;display:grid;place-items:center}
 .step b{min-width:22px;text-align:center;font-size:14px}
 .addm{padding:7px 16px;border-radius:999px;background:var(--grad);font-size:13px;font-weight:600;color:var(--ink)}
-.cartbar{position:sticky;bottom:8px;margin:10px 14px 8px;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:16px;background:var(--grad);color:var(--ink);font-weight:700;box-shadow:0 10px 30px #FDF10544;width:calc(100% - 28px)}
+.cartbar{position:sticky;bottom:calc(var(--minih,70px) + 14px);z-index:5;margin:10px 14px 8px;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:16px;background:var(--grad);color:var(--ink);font-weight:700;box-shadow:0 10px 30px #FDF10544;width:calc(100% - 28px)}
 .ord{margin:0 14px 10px;padding:12px;border-radius:14px;background:var(--surface);border:1px solid var(--line)}
 .ord-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .ord ul{list-style:none;font-size:13px;color:#d9d6ee;display:flex;flex-direction:column;gap:2px}
@@ -256,7 +258,9 @@ details.script ol{padding-left:18px;margin-top:8px;display:flex;flex-direction:c
 .qrcard{margin:8px 14px;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);display:flex;gap:14px;align-items:center}
 .qrcard .q{width:92px;height:92px;background:#fff;border-radius:10px;padding:5px;flex:none}
 .qrcard .q img{width:100%;height:100%;object-fit:contain;display:block}
-.qrcard p{font-size:12.5px;color:var(--muted)}
+.qrcard b{font-size:15px}
+.qrcard ol{margin:6px 0 0;padding-left:20px;font-size:13.5px;color:#d6d2ee;display:flex;flex-direction:column;gap:3px}
+.qrcard li::marker{color:var(--brand);font-weight:700}
 
 /* layer / sheets */
 .layer,.dlg{position:absolute;inset:0;pointer-events:none;z-index:20}
@@ -331,7 +335,7 @@ input[type=range]{width:100%;accent-color:var(--brand);height:28px}
 /* ============ TABLET / iPad — เมนูข้างซ้าย + แถบเพลงล่างเต็มจอ (สไตล์ Spotify / Apple Music) ============ */
 @media (min-width:721px) and (max-width:1399px){
   body{font-size:15px}
-  .app{display:grid;grid-template-columns:232px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"hdr hdr" "nav main" "mini mini"}
+  .app{display:grid;grid-template-columns:232px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);grid-template-areas:"hdr hdr" "nav main"}
   .hdr{grid-area:hdr;padding:12px 28px;padding-top:max(12px,env(safe-area-inset-top))}
   .hlogo{height:34px}
   .hdr .room{font-size:13.5px}
@@ -342,7 +346,7 @@ input[type=range]{width:100%;accent-color:var(--brand);height:28px}
   .tabbar button.on{background:var(--surface2)}
   .tabbar button svg{width:24px;height:24px}
   .badge{position:static;margin-left:auto;top:auto;left:auto}
-  .mini{grid-area:mini;margin:0;border-radius:0;border:0;border-top:1px solid var(--line);background:#171515;padding:12px 28px 14px}
+  .mini{left:232px;right:0;bottom:0;border-radius:0;border:0;border-top:1px solid #ffffff1f;box-shadow:none;background:rgba(26,24,24,.58);padding:12px 28px 14px}
   .mini.idle{padding:16px}
   .mini .cv-s{width:56px;height:56px;border-radius:12px}
   .mini-t b .tt{font-size:18px}
@@ -745,13 +749,20 @@ class Phone{
     this.cap.textContent=`📱 มือถือ ${this.label} — `+(this.stage==='app'&&sg(this.me)?`${sg(this.me).emoji} ${sg(this.me).name}`:'ยังไม่ได้เข้าห้อง');
     this.renderStage();
     if(this.stage!=='app')return;
-    this.renderHdr();this.renderTabbar();this.renderMini();this.renderLayer();this.renderDialog();
+    this.renderHdr();this.renderTabbar();this.renderMini();this.syncBars();this.renderLayer();this.renderDialog();
     if(this===PH[0])document.body.classList.toggle('sheet-open',!!this.sheet||!!this.dialog);
     if(!this.dragging)this.renderMain();
   }
-  updateCtl(){if(this.stage!=='app')return;this.renderMini();if(this.sheet==='now')this.updateNow()}
+  updateCtl(){if(this.stage!=='app')return;this.renderMini();this.syncBars();if(this.sheet==='now')this.updateNow()}
+  // วัดความสูงแถบกำลังเล่น/แท็บล่าง เพื่อให้เนื้อหาเลื่อนพ้นใต้แถบลอยได้ครบ
+  syncBars(){
+    if(this.stage!=='app')return;const m=this.$('.mini'),t=this.$('.tabbar');if(!m||!t)return;
+    const mh=m.offsetHeight,th=t.offsetHeight;if(!mh&&!th)return;
+    if(mh!==this._mh){this._mh=mh;this.el.style.setProperty('--minih',mh+'px')}
+    if(th!==this._th){this._th=th;this.el.style.setProperty('--tabh',th+'px')}
+  }
   tick(){
-    const root=this.el;
+    const root=this.el;this.syncBars();
     $$('[data-prog]',root).forEach(e=>e.style.width=(S.now?S.now.elapsed/SONG(S.now.songId).dur*100:0)+'%');
     $$('[data-el]',root).forEach(e=>e.textContent=S.now?fmt(S.now.elapsed):'0:00');
     $$('[data-ago]',root).forEach(e=>e.textContent=ago(+e.dataset.ago));
@@ -897,7 +908,7 @@ class Phone{
     h+=`<div class="qh"><h3>ผู้ร้องในห้อง</h3><button class="link" data-act="editname">แก้ชื่อเล่นของฉัน</button></div>`;
     h+=S.singers.map(s=>{const q=S.queue.filter(x=>x.by===s.id).length+(S.now&&S.now.by===s.id?1:0),o=S.orders.filter(x=>x.by===s.id).reduce((a,x)=>a+orderTotal(x),0);
       return `<div class="sgrow"><div class="av" style="--c:${s.color};margin:0">${s.emoji}</div><div class="t"><b>${esc(s.name)}${s.id===this.me?'<i class="you">คุณ</i>':''}</b><span>${q} เพลงในคิว · สั่งไป ${baht(o)}</span></div></div>`}).join('');
-    h+=`<div class="qrcard"><div class="q"><img src="assets/qr.png" alt="QR Code ห้อง 5" onerror="this.parentNode.remove()"></div><div><b>ชวนเพื่อนเข้าห้อง</b><p>ให้เพื่อนสแกน QR ที่ผนังห้อง ใส่ชื่อเล่น แล้วเพิ่มเพลงลงคิวร่วมกันได้ทันที</p></div></div>`;
+    h+=`<div class="qrcard"><div class="q"><img src="assets/qr.png" alt="QR Code ห้อง 5" onerror="this.parentNode.remove()"></div><div><b>ชวนเพื่อนเข้าห้อง</b><ol><li>Scan QR Code</li><li>ตั้งชื่อเล่น</li><li>เริ่มต้นใช้งานได้ทันที</li></ol></div></div>`;
     h+=`<div class="hint" style="text-align:center;padding:10px 20px 20px">ทุกคนในห้องมีสิทธิ์เท่ากัน · เมื่อห้องเช็กเอาต์ คิวและรายชื่อจะถูกล้างอัตโนมัติ</div>`;
     D.innerHTML=h;
   }
@@ -1071,6 +1082,7 @@ function boot(){
 }
 $('#modeSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$$('#modeSeg button').forEach(x=>x.classList.toggle('on',x===b));$('#phones').classList.toggle('one',b.dataset.m==='1')});
 if(/[?&]demo=1/.test(location.search))document.body.classList.add('demo-on'); // มือถือ: เปิดปุ่ม DEMO ด้วย ?demo=1
+addEventListener('resize',()=>PH.forEach(p=>p.syncBars()));
 $('#fab').addEventListener('click',()=>$('#demo').classList.toggle('open'));
 boot();
 </script>
